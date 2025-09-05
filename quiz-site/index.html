@@ -250,7 +250,6 @@
   { img: "images/s88.png", correct: "d" },
   { img: "images/s89.png", correct: "c" },
   { img: "images/s90.png", correct: "b" }
-      // ... continue with your full list
     ];
 
     let originalQuestions = [...questions];
@@ -268,7 +267,7 @@
     const resultBox = document.getElementById("result-box");
     const shuffleBtn = document.querySelector(".shuffle-btn");
 
-    const optionLabels = ["a","b","c","d"];
+    const optionLabels = ["A","B","C","D"];
 
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -293,6 +292,8 @@
     }
 
     function loadQuestion() {
+      if (questions.length === 0) return;
+
       clearInterval(timer);
       timeLeft = 10;
       timeDisplay.textContent = timeLeft;
@@ -308,7 +309,7 @@
       optionsDiv.innerHTML = "";
       optionLabels.forEach(label=>{
         let btn = document.createElement("button");
-        btn.textContent = label.toUpperCase();
+        btn.textContent = label;
         btn.onclick = ()=>checkAnswer(label,btn);
         optionsDiv.appendChild(btn);
       });
@@ -321,7 +322,7 @@
       timeDisplay.textContent = timeLeft;
       if(timeLeft<=0){
         clearInterval(timer);
-        nextQuestion(); // move to next when time is over
+        nextQuestion(); 
       }
     }
 
@@ -330,7 +331,10 @@
       let correct = questions[currentQuestion].correct;
 
       let allBtns = optionsDiv.querySelectorAll("button");
-      allBtns.forEach(b => b.disabled = true);
+      allBtns.forEach(b => {
+        b.disabled = true;
+        b.style.cursor = "not-allowed";
+      });
 
       if (answer === correct) {
         btn.style.background = "green";
@@ -338,7 +342,7 @@
       } else {
         btn.style.background = "red";
         allBtns.forEach(b => {
-          if (b.textContent.toLowerCase() === correct) {
+          if (b.textContent === correct) {
             b.style.background = "green";
           }
         });
