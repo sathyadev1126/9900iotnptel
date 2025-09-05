@@ -21,7 +21,7 @@
       padding: 20px;
       border-radius: 15px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-      width: 900%;
+      width: 90%;
       max-width: 750px;
       text-align: center;
       position: relative;
@@ -46,16 +46,15 @@
       color: #e53935;
     }
 
-   #question-img {
-  display: block;
-  margin: 0 auto;
-  border-radius: 10px;
-  max-height: 70vh;   /* Prevents overflow */
-  width: auto;        /* Keeps original width */
-  height: auto;       /* Keeps original height */
-  object-fit: contain; /* No distortion */
-}
-
+    #question-img {
+      display: block;
+      margin: 0 auto;
+      border-radius: 10px;
+      max-height: 70vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
 
     .options {
       display: grid;
@@ -69,7 +68,7 @@
       border: none;
       border-radius: 10px;
       background: #42a5f5;
-      color: rgb(255, 255, 255);
+      color: #fff;
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
@@ -96,6 +95,23 @@
     .nav-btn:hover { background: #1e88e5; }
     .prev-btn { left: 20px; }
     .next-btn { right: 20px; }
+
+    /* Shuffle toggle button */
+    .shuffle-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 8px 14px;
+      background: #ff9800;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .shuffle-btn:hover { background: #fb8c00; }
 
     /* Result box */
     .result-box {
@@ -135,6 +151,7 @@
       <div class="progress" id="progress"></div>
       <div class="timer">⏳ <span id="time">10</span>s</div>
     </div>
+    <button class="shuffle-btn" onclick="toggleShuffle()">Shuffle: OFF</button>
     <img id="question-img" src="" alt="Question">
     <div class="options" id="options"></div>
   </div>
@@ -143,13 +160,13 @@
 
   <script>
     let questions = [
-  { img: "images/s1.png", correct: "c" },
-  { img: "images/s2.png", correct: "b" },
-  { img: "images/s3.png", correct: "d" },
-  { img: "images/s4.png", correct: "b" },
-  { img: "images/s5.png", correct: "c" },
-  { img: "images/s6.png", correct: "b" },
-  { img: "images/s7.png", correct: "c" },
+      { img: "images/s1.png", correct: "c" },
+      { img: "images/s2.png", correct: "c" },
+      { img: "images/s3.png", correct: "c" },
+      { img: "images/s4.png", correct: "c" },
+      { img: "images/s5.png", correct: "c" },
+      { img: "images/s6.png", correct: "c" },
+       { img: "images/s7.png", correct: "c" },
   { img: "images/s8.png", correct: "c" },
   { img: "images/s9.png", correct: "c" },
   { img: "images/s10.png", correct: "b" },
@@ -233,7 +250,11 @@
   { img: "images/s88.png", correct: "d" },
   { img: "images/s89.png", correct: "c" },
   { img: "images/s90.png", correct: "b" }
+      // ... continue with your full list
     ];
+
+    let originalQuestions = [...questions];
+    let shuffleEnabled = false;
 
     let currentQuestion = 0;
     let score = 0;
@@ -245,8 +266,31 @@
     const progress = document.getElementById("progress");
     const timeDisplay = document.getElementById("time");
     const resultBox = document.getElementById("result-box");
+    const shuffleBtn = document.querySelector(".shuffle-btn");
 
     const optionLabels = ["a","b","c","d"];
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function toggleShuffle() {
+      shuffleEnabled = !shuffleEnabled;
+      if (shuffleEnabled) {
+        questions = shuffleArray([...originalQuestions]);
+        shuffleBtn.textContent = "Shuffle: ON";
+      } else {
+        questions = [...originalQuestions];
+        shuffleBtn.textContent = "Shuffle: OFF";
+      }
+      currentQuestion = 0;
+      score = 0;
+      loadQuestion();
+    }
 
     function loadQuestion() {
       clearInterval(timer);
@@ -257,7 +301,6 @@
       let q = questions[currentQuestion];
       imgElement.src = q.img;
 
-      // Fade animation
       imgElement.classList.remove("fade-in");
       void imgElement.offsetWidth;
       imgElement.classList.add("fade-in");
@@ -273,37 +316,32 @@
       progress.textContent = `Question ${currentQuestion+1} of ${questions.length}`;
     }
 
-    function checkAnswer(answer, btn) {
-  clearInterval(timer);
-  let correct = questions[currentQuestion].correct;
-
-  // Disable all options after choosing
-  let allBtns = optionsDiv.querySelectorAll("button");
-  allBtns.forEach(b => b.disabled = true);
-
-  if (answer === correct) {
-    btn.style.background = "green";
-    score++;
-  } else {
-    btn.style.background = "red";
-    // highlight correct one
-    allBtns.forEach(b => {
-      if (b.textContent.toLowerCase() === correct) {
-        b.style.background = "green";
-      }
-    });
-  }
-
-  // 👉 Now quiz will wait for Next button instead of auto-moving
-}
-
-
     function updateTimer() {
       timeLeft--;
       timeDisplay.textContent = timeLeft;
       if(timeLeft<=0){
         clearInterval(timer);
-        nextQuestion();
+        nextQuestion(); // move to next when time is over
+      }
+    }
+
+    function checkAnswer(answer, btn) {
+      clearInterval(timer);
+      let correct = questions[currentQuestion].correct;
+
+      let allBtns = optionsDiv.querySelectorAll("button");
+      allBtns.forEach(b => b.disabled = true);
+
+      if (answer === correct) {
+        btn.style.background = "green";
+        score++;
+      } else {
+        btn.style.background = "red";
+        allBtns.forEach(b => {
+          if (b.textContent.toLowerCase() === correct) {
+            b.style.background = "green";
+          }
+        });
       }
     }
 
@@ -347,4 +385,3 @@
   </script>
 </body>
 </html>
-
