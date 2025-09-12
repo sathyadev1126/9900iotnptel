@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IOT Nptel Quiz</title>
+  <title>Study Quiz</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, sans-serif;
@@ -18,7 +18,7 @@
     }
 
     .quiz-container {
-      width: 100%;
+      width: 90%;
       max-width: 750px;
       background: rgba(255, 255, 255, 0.95);
       padding: 25px;
@@ -39,8 +39,24 @@
     }
 
     h2 {
-      color: #070120;
+      color: #2c3e50;
       margin-bottom: 10px;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #42a5f5;
+      transition: width 0.3s ease;
     }
 
     /* Question number + Timer row */
@@ -61,6 +77,12 @@
       font-size: 18px;
       font-weight: bold;
       color: #e53935;
+    }
+    .timer.warning {
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0.5; }
     }
 
     img {
@@ -147,13 +169,47 @@
       font-size: 18px;
       margin: 5px 0;
     }
+    .result-box.good { border: 3px solid #4caf50; }
+    .result-box.medium { border: 3px solid #ff9800; }
+    .result-box.bad { border: 3px solid #e53935; }
+
+    /* Footer */
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .footer span {
+      font-size: 16px;
+      font-weight: bold;
+      color: red;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 600px) {
+      .options {
+        grid-template-columns: 1fr; /* stack buttons */
+      }
+      .options button {
+        font-size: 18px;
+        padding: 14px;
+      }
+      h2 {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
   
   <div class="quiz-container" id="quiz-box">
     <button class="toggle-btn" id="random-toggle">Random: ON</button>
-    <h2>IOT Nptel Quiz</h2>
+    <h2>📘 Study Quiz</h2>
+
+    <!-- Progress bar -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
 
     <!-- Question number + Timer row -->
     <div class="top-bar">
@@ -165,7 +221,7 @@
     <div class="options" id="options"></div>
     <button class="next-btn" onclick="nextQuestion()">Next</button>
     <button class="restart-btn" onclick="restartQuiz()" style="display:none;">Restart</button>
-    <div class="footer">© Created by <span style="color:red; font-weight: bold;">SATHYADEV</span></div>
+    <div class="footer">© Created by <span>SATHYADEV</span></div>
   </div>
 
   <div class="result-box" id="result-box">
@@ -177,9 +233,8 @@
   </div>
 
   <script>
-     let questions = [
-      
-  { img: "images/s1.png", correct: "d" },
+    let questions = [
+        { img: "images/s1.png", correct: "d" },
   { img: "images/s2.png", correct: "a" },
   { img: "images/s3.png", correct: "a" },
   { img: "images/s4.png", correct: "b" },
@@ -285,7 +340,7 @@
   { img: "images/s104.png", correct: "b" },
   { img: "images/s105.png", correct: "b" }
 
-
+      
     ];
 
     const optionLabels = ["a", "b", "c", "d"];
@@ -308,6 +363,8 @@
     const finalScore = document.getElementById("final-score");
     const percentage = document.getElementById("percentage");
     const message = document.getElementById("message");
+    const progress = document.getElementById("progress");
+    const timerDiv = document.querySelector(".timer");
 
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
@@ -341,6 +398,9 @@
 
         nextBtn.disabled = true;
 
+        // Update progress
+        progress.style.width = ((currentQuestion) / shuffledQuestions.length) * 100 + "%";
+
         // Fade-in effect
         quizBox.style.animation = "fadeIn 0.5s ease-in-out";
       }, 300);
@@ -349,14 +409,25 @@
     function updateTimer() {
       timeLeft--;
       timeDisplay.textContent = timeLeft;
+
+      if (timeLeft <= 5) {
+        timerDiv.classList.add("warning");
+      } else {
+        timerDiv.classList.remove("warning");
+      }
+
       if (timeLeft <= 0) {
         clearInterval(timer);
-        nextQuestion(); 
+        nextQuestion();
       }
     }
 
     function checkAnswer(answer, button) {
       clearInterval(timer);
+
+      // Prevent multiple clicks
+      Array.from(optionsDiv.children).forEach(btn => btn.disabled = true);
+
       let correct = shuffledQuestions[currentQuestion].correct;
       if (answer === correct) {
         button.classList.add("correct");
@@ -389,12 +460,16 @@
       finalScore.textContent = `✅ Your Score: ${score}/${shuffledQuestions.length}`;
       percentage.textContent = `📊 Percentage: ${percent}%`;
 
+      resultBox.classList.remove("good","medium","bad");
       if (percent >= 80) {
         message.textContent = "🌟 Excellent! You're a study champion!";
+        resultBox.classList.add("good");
       } else if (percent >= 50) {
         message.textContent = "👍 Good effort! Keep practicing.";
+        resultBox.classList.add("medium");
       } else {
         message.textContent = "📖 Don't give up! Try again and improve.";
+        resultBox.classList.add("bad");
       }
     }
 
