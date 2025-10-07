@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Study Quiz</title>
+  <title>IOT Nptel Quiz</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, sans-serif;
@@ -18,7 +18,7 @@
     }
 
     .quiz-container {
-      width: 90%;
+      width: 100%;
       max-width: 750px;
       background: rgba(255, 255, 255, 0.95);
       padding: 25px;
@@ -28,25 +28,40 @@
       animation: fadeIn 0.6s ease-in-out;
     }
 
-    @keyframes fadeIn { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
-    @keyframes fadeOut { from {opacity: 1; transform: translateY(0);} to {opacity: 0; transform: translateY(-20px);} }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
 
-    h2 { color: #2c3e50; margin-bottom: 10px; }
+    @keyframes fadeOut {
+      from {opacity: 1; transform: translateY(0);}
+      to {opacity: 0; transform: translateY(-20px);}
+    }
 
-    /* Progress Bar */
-    
-    
-    /* Question number + Timer */
+    h2 {
+      color: #070120;
+      margin-bottom: 10px;
+    }
+
+    /* Question number + Timer row */
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
     }
-    .question-number { font-size: 18px; font-weight: bold; color: #1565c0; }
-    .timer { font-size: 18px; font-weight: bold; color: #e53935; }
-    .timer.warning { color: red; animation: blink 1s infinite; }
-    @keyframes blink { 50% { opacity: 0.5; } }
+
+    .question-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1565c0;
+    }
+
+    .timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: #e53935;
+    }
 
     img {
       max-width: 100%;
@@ -56,11 +71,12 @@
     }
 
     .options {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Always 2×2 */
-  gap: 15px;
-  margin: 20px 0;
-}
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
     .options button {
       padding: 12px;
       font-size: 16px;
@@ -70,9 +86,18 @@
       cursor: pointer;
       transition: all 0.3s ease;
     }
-    .options button:hover { background: #bbdefb; transform: scale(1.03); }
-    .options button.correct { background: #4caf50; color: white; }
-    .options button.wrong { background: #e53935; color: white; }
+    .options button:hover {
+      background: #bbdefb;
+      transform: scale(1.03);
+    }
+    .options button.correct {
+      background: #4caf50;
+      color: white;
+    }
+    .options button.wrong {
+      background: #e53935;
+      color: white;
+    }
 
     .next-btn, .restart-btn {
       margin-top: 15px;
@@ -85,7 +110,9 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    .next-btn:hover, .restart-btn:hover { background: #1e88e5; }
+    .next-btn:hover, .restart-btn:hover {
+      background: #1e88e5;
+    }
 
     .toggle-btn {
       position: absolute;
@@ -98,9 +125,10 @@
       cursor: pointer;
       font-weight: bold;
     }
-    .toggle-btn.active { background: #66bb6a; color: white; }
-
-
+    .toggle-btn.active {
+      background: #66bb6a;
+      color: white;
+    }
 
     .result-box {
       display: none;
@@ -110,30 +138,24 @@
       box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
       animation: fadeIn 0.7s ease-in-out;
     }
-    .result-box h3 { font-size: 24px; margin-bottom: 10px; color: #2c3e50; }
-    .result-box p { font-size: 18px; margin: 5px 0; }
-    .result-box.good { border: 3px solid #4caf50; }
-    .result-box.medium { border: 3px solid #ff9800; }
-    .result-box.bad { border: 3px solid #e53935; }
-
-    /* Mobile Responsive */
-   @media (max-width: 600px) {
-  .options button {
-    font-size: 16px;
-    padding: 12px;
-  }
-}
+    .result-box h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    .result-box p {
+      font-size: 18px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
+  
   <div class="quiz-container" id="quiz-box">
     <button class="toggle-btn" id="random-toggle">Random: ON</button>
-    <h2>📘 IOT NPTEL</h2>
+    <h2>IOT Nptel Quiz</h2>
 
-    <!-- Progress Bar -->
-  
-
-    <!-- Question number + Timer -->
+    <!-- Question number + Timer row -->
     <div class="top-bar">
       <div class="question-number" id="question-number"></div>
       <div class="timer">Time left: <span id="time">30</span>s</div>
@@ -155,7 +177,7 @@
   </div>
 
   <script>
-    let questions = [
+     let questions = [
       
   { img: "images/s1.png", correct: "d" },
   { img: "images/s2.png", correct: "a" },
@@ -261,7 +283,53 @@
   { img: "images/s102.png", correct: "b" },
   { img: "images/s103.png", correct: "b" },
   { img: "images/s104.png", correct: "b" },
-  { img: "images/s105.png", correct: "b" }
+  { img: "images/s105.png", correct: "b" },
+   { img: "images/s106.png", correct: "b" },
+  { img: "images/s107.png", correct: "c" },
+  { img: "images/s108.png", correct: "c" },
+  { img: "images/s109.png", correct: "b" },
+  { img: "images/s110.png", correct: "c" },
+  { img: "images/s111.png", correct: "c" },
+  { img: "images/s112.png", correct: "a" },
+  { img: "images/s113.png", correct: "b" },
+  { img: "images/s114.png", correct: "b" },
+  { img: "images/s115.png", correct: "a" },
+  { img: "images/s116.png", correct: "c" },
+  { img: "images/s117.png", correct: "b" },
+  { img: "images/s118.png", correct: "d" },
+  { img: "images/s119.png", correct: "b" },
+  { img: "images/s120.png", correct: "b" },
+  { img: "images/s121.png", correct: "c" },
+  { img: "images/s122.png", correct: "d" },
+  { img: "images/s123.png", correct: "c" },
+  { img: "images/s124.png", correct: "d" },
+  { img: "images/s125.png", correct: "b" },
+  { img: "images/s126.png", correct: "d" },
+  { img: "images/s127.png", correct: "b" },
+  { img: "images/s128.png", correct: "c" },
+  { img: "images/s129.png", correct: "a" },
+  { img: "images/s130.png", correct: "d" },
+  { img: "images/s131.png", correct: "d" },
+  { img: "images/s132.png", correct: "b" },
+  { img: "images/s133.png", correct: "a" },
+  { img: "images/s134.png", correct: "c" },
+  { img: "images/s135.png", correct: "a" },
+  { img: "images/s136.png", correct: "b" },
+  { img: "images/s137.png", correct: "b" },
+  { img: "images/s138.png", correct: "c" },
+  { img: "images/s139.png", correct: "c" },
+  { img: "images/s140.png", correct: "c" },
+  { img: "images/s141.png", correct: "d" },
+  { img: "images/s142.png", correct: "d" },
+  { img: "images/s143.png", correct: "c" },
+  { img: "images/s144.png", correct: "c" },
+  { img: "images/s145.png", correct: "b" },
+  { img: "images/s146.png", correct: "a" },
+  { img: "images/s147.png", correct: "d" },
+  { img: "images/s148.png", correct: "c" },
+  { img: "images/s149.png", correct: "b" },
+  { img: "images/s150.png", correct: "a" }     
+
 
     ];
 
@@ -269,7 +337,9 @@
     let shuffledQuestions = [];
     let currentQuestion = 0;
     let score = 0;
-    let timer, timeLeft = 30, randomOn = true;
+    let timer;
+    let timeLeft = 30;
+    let randomOn = true;
 
     const imgElement = document.getElementById("question-img");
     const optionsDiv = document.getElementById("options");
@@ -277,7 +347,6 @@
     const timeDisplay = document.getElementById("time");
     const randomToggle = document.getElementById("random-toggle");
     const questionNumber = document.getElementById("question-number");
-   
 
     const quizBox = document.getElementById("quiz-box");
     const resultBox = document.getElementById("result-box");
@@ -301,6 +370,7 @@
 
       let q = shuffledQuestions[currentQuestion];
 
+      // Fade-out effect before loading
       quizBox.style.animation = "fadeOut 0.3s ease-in";
       setTimeout(() => {
         imgElement.src = q.img;
@@ -316,9 +386,7 @@
 
         nextBtn.disabled = true;
 
-        // Update progress bar
-      
-
+        // Fade-in effect
         quizBox.style.animation = "fadeIn 0.5s ease-in-out";
       }, 300);
     }
@@ -326,23 +394,14 @@
     function updateTimer() {
       timeLeft--;
       timeDisplay.textContent = timeLeft;
-
-      if (timeLeft <= 5) {
-        timeDisplay.parentElement.classList.add("warning");
-      } else {
-        timeDisplay.parentElement.classList.remove("warning");
-      }
-
       if (timeLeft <= 0) {
         clearInterval(timer);
-        nextQuestion();
+        nextQuestion(); 
       }
     }
 
     function checkAnswer(answer, button) {
       clearInterval(timer);
-      Array.from(optionsDiv.children).forEach(btn => btn.disabled = true);
-
       let correct = shuffledQuestions[currentQuestion].correct;
       if (answer === correct) {
         button.classList.add("correct");
@@ -350,7 +409,9 @@
       } else {
         button.classList.add("wrong");
         Array.from(optionsDiv.children).forEach(btn => {
-          if (btn.textContent.toLowerCase() === correct) btn.classList.add("correct");
+          if (btn.textContent.toLowerCase() === correct) {
+            btn.classList.add("correct");
+          }
         });
       }
       nextBtn.disabled = false;
@@ -373,16 +434,12 @@
       finalScore.textContent = `✅ Your Score: ${score}/${shuffledQuestions.length}`;
       percentage.textContent = `📊 Percentage: ${percent}%`;
 
-      resultBox.classList.remove("good","medium","bad");
       if (percent >= 80) {
         message.textContent = "🌟 Excellent! You're a study champion!";
-        resultBox.classList.add("good");
       } else if (percent >= 50) {
         message.textContent = "👍 Good effort! Keep practicing.";
-        resultBox.classList.add("medium");
       } else {
         message.textContent = "📖 Don't give up! Try again and improve.";
-        resultBox.classList.add("bad");
       }
     }
 
@@ -406,4 +463,5 @@
     loadQuestion();
   </script>
 </body>
+
 </html>
